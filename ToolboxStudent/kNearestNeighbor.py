@@ -1,3 +1,4 @@
+# -*- coding: latin-1 -*-
 #    Copyright 2016 Stefan Steidl
 #    Friedrich-Alexander-Universität Erlangen-Nürnberg
 #    Lehrstuhl für Informatik 5 (Mustererkennung)
@@ -57,6 +58,7 @@ class kNearestNeighbor(object):
 		Z = numpy.zeros(0)
 		for i in range(numRuns):
 		    Xs = X[i * m: (i + 1) * m]
+		    length = len(Xs)
 		    d1 = numpy.square(Xs).sum(axis = 1)
 		    d2 = numpy.square(self.__X).sum(axis = 1)
 		    D = numpy.dot(Xs, self.__X.T)
@@ -80,7 +82,7 @@ class kNearestNeighbor(object):
 		    	#sums up the occurence of certain classes in T
 		    	binc = numpy.bincount(sub)
 		    	#sorts the classes according to number of occurence -> most occurende in last index (-1) -> gives back class with most occurence of the k neighboring points
-		    	a = (numpy.argsort(binc)[-1]).astype(int)
+		    	a = (numpy.argmax(binc)).astype(int)
 		    	Z[j] = a
 		    	j +=1
 		    j = 0
