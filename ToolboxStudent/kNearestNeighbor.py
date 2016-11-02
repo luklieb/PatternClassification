@@ -39,7 +39,7 @@ class kNearestNeighbor(object):
 		self.__y = y
 		self.__m = len(X)
 		self.__mMax = 1e8
-		self.printDebug()
+		#self.printDebug()
 
 
 	def predict(self, X):
@@ -81,7 +81,7 @@ class kNearestNeighbor(object):
 		    for sub in T:
 		    	#sums up the occurence of certain classes in T
 		    	binc = numpy.bincount(sub)
-		    	#sorts the classes according to number of occurence -> most occurende in last index (-1) -> gives back class with most occurence of the k neighboring points
+		    	#returns the index of the classes with the highest occurence
 		    	a = (numpy.argmax(binc)).astype(int)
 		    	Z[j] = a
 		    	j +=1
@@ -92,12 +92,12 @@ class kNearestNeighbor(object):
 	
 
 
-
+'''
 	def printDebug(self):
 		print("__k: ", self.__k, " __mMax: ", self.__mMax, " __X: ", self.__X, " __y: ", self.__y, " __m: ", self.__m)
 		
 
-
+'''
 
 		
 #print(" numRuns: ", numRuns, "\n"," i: ", i, "\n"," lenX: ", len(X), "\n"," X: ", X, "\n", " Xs: ", Xs, "\n"," d1: ", d1, "\n", " d2: ", d2, "\n", " D: ", D, "\n", " temp: ", temp, "\n", " ind: ", ind, "\n", " T: ", T, "\n", " Z: ", Z, "\n")
