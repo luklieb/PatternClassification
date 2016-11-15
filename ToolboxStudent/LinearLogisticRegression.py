@@ -22,42 +22,87 @@
 #    If not, see <http://www.gnu.org/licenses/>.
 
 
-import numpy
+import numpy as np
 import numpy.matlib
+import math
 
 
 class LinearLogisticRegression(object):
 
-    def __init__(self, learningRate = 0.5, maxIterations = 100):
+	def __init__(self, learningRate = 0.01, maxIterations = 100):
 		self.__learningRate = learningRate
 		self.__maxIterations = maxIterations
-        return None
+		#3 factors for theta since dec. bound. is linear
+		self.__theta = np.empty(3)
+		return None
 
 
-	#estimate from labeled training samples
-    def fit(self, X, y):
-		self.__X = X
+
+
+	#estimate from labeled training samples; X in each row a new sample point is given; y np-Vector with classes (double values)
+	#compute theta with MLM (newton-raphson)(from training samples)
+	def fit(self, X, y):
+		#jeden sample in X am Ende mit 1 erweitern (3D), um spaeter mit theta multipliz. zu koennen
+		self.__X = np.insert(X, 2, 1, axis=1)
 		self.__y = y
-		self.__m = len(X)
-
-        return None
-        
-        
-    #sigmoid fct g(O)=1/(1+e^-Ox)  O=theta
-	# X vector
-    def gFunc(self, X, theta):
-		return  1 / (1 + math.exp(-(transpose(theta).dot(X))))      
-
-	#compute O (theta) with newton (from training samples) -> plug O in gFunc() -> check all classes y with gFunc and return highest posterior prob.
-    def predict(self, X):
-        
+		#Anzahl eintraege von X (anzahl samples)
+		self.__entries = len(X)
+		#Maximal zwei moegliche Klassen
+		self.__class = np.empty(2)
+		self.__class[0] = min(y)
+		self.__class[1] = max(y)
+		print(X)
+		print(y)
 		
+		#Newton iteration
+		for i in range(self.__maxIterations):
+			#Vector von sigmoid fct
+			sigmoid = self.gFunc(self.__X, self.__theta)
+			#print(max(sigmoid))
+			#print(min(sigmoid))
+			gradient = ((y-sigmoid).dot(self.__X))
+			temp=(1-sigmoid)*sigmoid
+			temp = temp[:, np.newaxis]
+			temp = self.__X*temp
+			self.__X = self.__X.transpose()
+			Hessian=-1*(self.__X.dot(temp))
+			self.__X = self.__X.transpose()
+			#print("NORM: ", np.linalg.norm(Hessian))
+			if np.linalg.norm(Hessian) < 0.00000001:
+					return None
+			self.__theta = self.__theta - ((gradient.dot((1/Hessian)))*self.__learningRate)
+			
+			
+			
+			
+		return None
 
+	
+	#sigmoid fct g(O)=1/(1+e^-Ox)  O=theta
+	# X Matrix -> returns Vector (one scalar for each sample)
+	def gFunc(self, X, theta):
+		temp = np.zeros(len(X))
+		temp2 = np.array(-X.dot(theta))
+		np.exp(temp2,temp2)
+		return  1/(temp2+1)
+	
+	
+	
 
-
-
-
-		return Z
+	
+	# plug optimized theta in gFunc() -> check if smaller or higher than 0.5 (1-0.5)
+	def predict(self, X):
+		#print("#################### NEW PREDICTION ######################")
+		Xneu = np.insert(X, 2, 1, axis=1)
+		Ausgabe  =self.gFunc(Xneu, self.__theta)
+		print("Ausgabe1: ", Ausgabe, "\n")
+		for i in Ausgabe:
+			if Ausgabe[i] >= 0.5:
+				Ausgabe[i] = self.__class[1]
+			else:
+				Ausgabe[i] = self.__class[0]
+		
+		return Ausgabe
 
 
 
