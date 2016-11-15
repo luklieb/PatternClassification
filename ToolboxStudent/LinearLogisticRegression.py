@@ -68,7 +68,7 @@ class LinearLogisticRegression(object):
 			Hessian=-1*(self.__X.dot(temp))
 			self.__X = self.__X.transpose()
 			#print("NORM: ", np.linalg.norm(Hessian))
-			if np.linalg.norm(Hessian) < 0.00000001:
+			if np.linalg.norm(Hessian) < 0.001:
 					return None
 			self.__theta = self.__theta - ((gradient.dot((1/Hessian)))*self.__learningRate)
 			
@@ -96,12 +96,17 @@ class LinearLogisticRegression(object):
 		Xneu = np.insert(X, 2, 1, axis=1)
 		Ausgabe  =self.gFunc(Xneu, self.__theta)
 		print("Ausgabe1: ", Ausgabe, "\n")
+		
+		#np.putmask(Ausgabe, Ausgabe>0.5, self.__class[1])
+		#np.putmask(Ausgabe, Ausgabe<=0.5, self.__class[1])
 		for i in Ausgabe:
 			if Ausgabe[i] >= 0.5:
-				Ausgabe[i] = self.__class[1]
-			else:
 				Ausgabe[i] = self.__class[0]
+			else:
+				Ausgabe[i] = self.__class[1]
 		
+		
+
 		return Ausgabe
 
 
